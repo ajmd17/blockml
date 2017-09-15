@@ -13,6 +13,10 @@
     "programming",
     "language"
   ],
-  "author": "",
+  "author": "Andrew MacDonald",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ajmd17/blockml.git"
+  },
   "license": "ISC"
 }
