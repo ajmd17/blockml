@@ -1,0 +1,18 @@
+{
+  "name": "blockml",
+  "version": "0.0.2",
+  "description": "An alternative to HTML that uses curly braces (blocks) rather than xml-style structures.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "markup",
+    "language",
+    "html",
+    "programming",
+    "language"
+  ],
+  "author": "",
+  "license": "ISC"
+}
