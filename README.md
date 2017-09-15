@@ -1,3 +1,5 @@
+# blockml
+
 blockml is a markup language that generates HTML. The purpose of blockml is to make writing HTML feel more consistent with the way we write JavaScript and CSS.
 
 You can use blockml on the server, or in the browser.
@@ -33,6 +35,7 @@ Would generate the following HTML:
 </html>
 ```
 
+### Usage
 To render blockml to HTML from Node.js, use the `render()` method.
 
 ```
@@ -46,3 +49,6 @@ blockml.render('html { body { "Your document here" } }', function (errors, resul
   }
 });
 ```
+
+### TODO:
+ - Handle `<script>` and `<style>` tags properly instead of trying to handle them like markup.
