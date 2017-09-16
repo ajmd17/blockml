@@ -2,6 +2,7 @@ if (typeof require === 'function') {
   var Token = require('./token');
   var Lexer = require('./lexer');
   var Parser = require('./parser');
+  var BlockNode = require('./block-node');
 }
 
 /**
@@ -25,6 +26,10 @@ function blockml(str) {
   result += raw[raw.length - 1];
   return blockml.render(result);
 }
+
+blockml.registerCustomHandler = function (tagName, handlers) {
+  BlockNode.registerCustomHandler(tagName, new BlockNode.Handler(handlers));
+};
 
 blockml.createDOMNodes = function (input, cb) {
   /** TODO */

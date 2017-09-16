@@ -8,6 +8,10 @@ if (typeof require === 'function') {
 }
 
 /**
+ * @typedef {{ parse: Function, renderToString: Function, createDOMNode: Function }} CodeNode
+ */
+
+/**
  * 
  * @param {String} message 
  * @param {{ line: Number, column: Number }} location 

@@ -3,6 +3,13 @@ if (typeof require === 'function') {
 }
 
 function test() {
+  // custom handlers
+  /*blockml.registerCustomHandler('head', {
+    renderToString: function (node) {
+      return 'custom rendering';
+    }
+  });*/
+
   var input = `
     html {
       head {
