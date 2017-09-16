@@ -6,6 +6,9 @@ function isSpace(ch) {
   return ch == ' ' || ch == '\n' || ch == '\t';
 }
 
+/**
+ * @param {String} input 
+ */
 function Lexer(input) {
   this.input = input;
   this.output = [];
@@ -20,12 +23,11 @@ Lexer.prototype.analyze = function () {
 
   while (this.hasNext()) {
     var token = this.nextToken();
-
-    this.skipWhitespace();
-
     if (token != null) {
       this.addToken(token);
     }
+
+    this.skipWhitespace();
   }
 
   return this.output;
@@ -52,6 +54,10 @@ Lexer.prototype.nextToken = function () {
   switch (ch) {
     case ':':
       return new Token(Token.Type.COLON, this.readChar());
+    case ',':
+      return new Token(Token.Type.COMMA, this.readChar());
+    case ';':
+      return new Token(Token.Type.SEMICOLON, this.readChar());
     case '{':
       return new Token(Token.Type.OPEN_BRACE, this.readChar());
     case '}':
@@ -82,6 +88,7 @@ Lexer.prototype.readStringLiteral = function () {
 
 Lexer.prototype.readEscapeSequence = function () {
   var ch = this.readChar();
+  console.log({ch})
 
   switch (ch) {
     case 't': return '\t';
@@ -90,7 +97,7 @@ Lexer.prototype.readEscapeSequence = function () {
     case 'r': return '\r';
     case 'f': return '\f';
     case '\'':
-    case '\"':
+    case '"':
     case '\\':
       return ch;
     default:

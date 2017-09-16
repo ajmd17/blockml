@@ -11,6 +11,10 @@ function BlockML(opts) {
   this.opts = opts || {};
 }
 
+BlockML.prototype.createDOMNodes = function (input, cb) {
+  /** TODO */
+};
+
 /**
  * @param {String} input
  * @param {function(String[], String)} [cb]
@@ -38,7 +42,7 @@ BlockML.prototype.render = function (input, cb) {
   var header = '<!DOCTYPE html>\n';
 
   var rendered = header + nodes.reduce(function (accum, el) {
-    return accum + el.transform() + '\n';
+    return accum + el.renderToString() + '\n';
   }, '');
 
   if (typeof cb === 'function') {

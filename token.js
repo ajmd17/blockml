@@ -23,8 +23,9 @@ Token.Type = {
   IDENTIFIER: 4,
   COMMA: 5,
   COLON: 6,
-  OPEN_BRACE: 7,
-  CLOSE_BRACE: 8
+  SEMICOLON: 7,
+  OPEN_BRACE: 8,
+  CLOSE_BRACE: 9
 };
 
 if (typeof module === 'object') {

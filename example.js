@@ -1,37 +1,40 @@
 if (typeof require === 'function') {
-  var Lexer = require('./lexer');
-  var Parser = require('./parser');
+  var blockml = require('./index');
 }
 
 function test() {
   var input = `
     html {
+      head {
+        link
+          rel: 'stylesheet'
+          href: 'styles.css';
+      }
       body {
         div {
-          "I am a div!"
+          "I am a div"
         }
+
+        input type: "text";
+
         a href: "https://google.com" {
-          "I am a link!"
+          "I am a\\"hi\\" 'dsdlink!"
         }
       }
     }
   `;
-
-  var lexer = new Lexer(input);
-  var tokens = lexer.analyze();
-
-  var parser = new Parser(tokens);
-  var nodes = parser.parse();
-
-  var html = nodes.reduce(function (accum, el) {
-    return accum + el.transform() + '\n';
-  }, '');
-
-  if (typeof document !== 'undefined') {
-    document.body.innerHTML = html;
-  } else {
-    console.log('Rendered HTML:\n\n', html);
-  }
+  
+  blockml.render(input, function (errors, result) {
+    if (errors.length) {
+      console.error('Errors: ', errors);
+    } else {
+      if (typeof document !== 'undefined') {
+        document.body.innerHTML = result;
+      } else {
+        console.log('Rendered HTML:\n\n', result);
+      }
+    }
+  });
 }
 
 test();

@@ -98,7 +98,11 @@ Parser.prototype.parse = function () {
       this.nodes.push(node);
     } else {
       if (this.hasNext()) {
-        this.errors.push(new ParseError('Unrecognized token `' + this.readToken().value + '`'));
+        var token = this.readToken();
+
+        if (token.type != Token.Type.ERROR) {
+          this.errors.push(new ParseError('Unexpected token `' + token.value + '`'));
+        }
       } else {
         this.errors.push(new ParseError('Unexpected end of input'));
       }
@@ -109,6 +113,16 @@ Parser.prototype.parse = function () {
 };
 
 Parser.prototype.parseStatement = function () {
+  if (this.matchToken(Token.Type.ERROR)) {
+    return null;
+  }
+
+  if (this.matchToken(Token.Type.NONE)) {
+    return null;
+  }
+
+  if (this.matchToken(Token.Type.SEMICOLON, true)); // skip semicolon
+
   if (this.matchToken(Token.Type.COMMENT)) {
     return this.parseComment();
   }
@@ -150,7 +164,9 @@ Parser.prototype.parseBlock = function () {
   var attributes = [];
 
   for (var token; token = this.matchToken(Token.Type.IDENTIFIER, true);) {
-    this.expectToken(Token.Type.COLON, true);
+    if (!this.expectToken(Token.Type.COLON, true)) {
+      return null;
+    }
 
     var expr = this.parseExpression();
     if (expr == null) {
@@ -158,20 +174,30 @@ Parser.prototype.parseBlock = function () {
     }
 
     attributes.push(new AttributeNode(token.value, expr));
+
+    // read optional commas. used to avoid inserting a semicolon
+    this.matchToken(Token.Type.COMMA, true);
   }
 
   /** @type {CodeNode[]} */
   var childStatements = [];
 
-  if (this.expectToken(Token.Type.OPEN_BRACE, true) == null) {
-    return null;
-  }
+  // semi-colons at end of statements close elements right away.
+  if (!this.matchToken(Token.Type.SEMICOLON, true)) {
+    if (this.expectToken(Token.Type.OPEN_BRACE, true) == null) {
+      return null;
+    }
 
-  while (!this.matchToken(Token.Type.CLOSE_BRACE, false)) {
-    childStatements.push(this.parseStatement());
-  }
+    while (!this.matchToken(Token.Type.CLOSE_BRACE, false)) {
+      var stmt = this.parseStatement();
+      if (stmt == null) {
+        return null;
+      }
+      childStatements.push(stmt);
+    }
 
-  this.expectToken(Token.Type.CLOSE_BRACE, true);
+    this.expectToken(Token.Type.CLOSE_BRACE, true);
+  }
 
   return new BlockNode(ident.value, attributes, childStatements);
 };
