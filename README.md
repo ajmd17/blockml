@@ -50,7 +50,7 @@ blockml.render('html { body { "Your document here" } }', function (errors, resul
 });
 ```
 
-The main `blockml` function can also be used as a template tag function. All text within `${...}` will be automatically enclosed in quotes.
+The main `blockml` function can also be used as a template tag function.
 
 Just note that any parsing or syntax errors will be thrown, rather than being passed as a callback parameter.
 
@@ -67,7 +67,7 @@ var myPage = blockml`
     }
     body {
       h1 {
-        ${myPageTitle}
+        "${myPageTitle}"
       }
 
       p {

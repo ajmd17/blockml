@@ -17,9 +17,9 @@ function blockml(str) {
       result += raw[i - 1];
       result += (typeof arguments[i] === 'array' || arguments[i] instanceof Array)
         ? arguments[i].map(function (arg) {
-            return '"' + arg + '"';
+            return arg;
           }).join('\n')
-        : '"' + arguments[i] + '"';
+        : arguments[i];
     }
   }
 
@@ -59,9 +59,7 @@ blockml.render = function (input, cb) {
     errors.push(parser.errors[i].message);
   }
 
-  var header = '<!DOCTYPE html>\n';
-
-  var rendered = header + nodes.reduce(function (accum, el) {
+  var rendered = nodes.reduce(function (accum, el) {
     return accum + el.renderToString() + '\n';
   }, '');
 
