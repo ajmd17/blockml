@@ -1,6 +1,6 @@
 {
   "name": "blockml",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "An alternative to HTML that uses curly braces (blocks) rather than xml-style structures.",
   "main": "index.js",
   "scripts": {
@@ -18,5 +18,6 @@
     "type": "git",
     "url": "https://github.com/ajmd17/blockml.git"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {}
 }

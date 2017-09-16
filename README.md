@@ -50,5 +50,56 @@ blockml.render('html { body { "Your document here" } }', function (errors, resul
 });
 ```
 
+The main `blockml` function can also be used as a template tag function. All text within `${...}` will be automatically enclosed in quotes.
+
+Just note that any parsing or syntax errors will be thrown, rather than being passed as a callback parameter.
+
+Here's an example showing the usage.
+
+```
+var myPageTitle = 'Your page title here';
+
+var myPage = blockml`
+  html {
+    head {
+      link rel: 'stylesheet'  /* comma is optional */
+            href: 'styles.css'; /* semicolon indicates no element body */
+    }
+    body {
+      h1 {
+        ${myPageTitle}
+      }
+
+      p {
+        "Lorem ipsum dolor sit amet"
+        hr;
+      }
+    }
+  }
+`;
+```
+
+This would output the following HTML:
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="styles.css"></link>
+    <!-- semicolon indicates no element body -->
+  </head>
+  <body>
+    <h1>
+      Your page title here
+    </h1>
+    <p>
+      Lorem ipsum dolor sit amet
+      <hr />
+    </p>
+  </body>
+</html>
+```
+
+
 ### TODO:
  - Handle `<script>` and `<style>` tags properly instead of trying to handle them like markup.
+ - A react/angular/vue.js type "plugin" that manages state/props and components.

@@ -4,6 +4,7 @@ if (typeof require === 'function') {
   var AttributeNode = require('./attribute-node');
   var StringNode = require('./string-node');
   var CommentNode = require('./comment-node');
+  var EmptyNode = require('./empty-node');
 }
 
 /**
@@ -121,7 +122,9 @@ Parser.prototype.parseStatement = function () {
     return null;
   }
 
-  if (this.matchToken(Token.Type.SEMICOLON, true)); // skip semicolon
+  if (this.matchToken(Token.Type.SEMICOLON, true)) {
+    return new EmptyNode();
+  }
 
   if (this.matchToken(Token.Type.COMMENT)) {
     return this.parseComment();
@@ -131,12 +134,7 @@ Parser.prototype.parseStatement = function () {
     return this.parseBlock();
   }
 
-  var expr = this.parseExpression();
-  if (expr != null) {
-    return expr;
-  }
-
-  return null;
+  return this.parseExpression();
 };
 
 Parser.prototype.parseExpression = function () {
@@ -176,7 +174,9 @@ Parser.prototype.parseBlock = function () {
     attributes.push(new AttributeNode(token.value, expr));
 
     // read optional commas. used to avoid inserting a semicolon
+    this.matchToken(Token.Type.COMMENT, true);
     this.matchToken(Token.Type.COMMA, true);
+    this.matchToken(Token.Type.COMMENT, true);
   }
 
   /** @type {CodeNode[]} */

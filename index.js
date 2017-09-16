@@ -5,13 +5,28 @@ if (typeof require === 'function') {
 }
 
 /**
- * @param {{}} [opts] 
+ * For use as a tagged template literal
  */
-function BlockML(opts) {
-  this.opts = opts || {};
+function blockml(str) {
+  var raw = str.raw;
+  var result = '';
+
+  if (arguments.length > 1) {
+    for (var i = 1; i < arguments.length; i++) {
+      result += raw[i - 1];
+      result += (typeof arguments[i] === 'array' || arguments[i] instanceof Array)
+        ? arguments[i].map(function (arg) {
+            return '"' + arg + '"';
+          }).join('\n')
+        : '"' + arguments[i] + '"';
+    }
+  }
+
+  result += raw[raw.length - 1];
+  return blockml.render(result);
 }
 
-BlockML.prototype.createDOMNodes = function (input, cb) {
+blockml.createDOMNodes = function (input, cb) {
   /** TODO */
 };
 
@@ -20,7 +35,7 @@ BlockML.prototype.createDOMNodes = function (input, cb) {
  * @param {function(String[], String)} [cb]
  * @returns {String}
  */
-BlockML.prototype.render = function (input, cb) {
+blockml.render = function (input, cb) {
   var errors = [];
 
   var lexer = new Lexer(input);
@@ -47,12 +62,17 @@ BlockML.prototype.render = function (input, cb) {
 
   if (typeof cb === 'function') {
     cb(errors, rendered);
+  } else {
+    // if no callback supplied, throw any errors
+    if (errors.length != 0) {
+      throw new Error(errors.reduce(function (accum, el) {
+        return el + '\n';
+      }, ''));
+    }
   }
 
   return rendered;
 };
-
-var blockml = new BlockML();
 
 if (typeof module !== 'undefined') {
   module.exports = blockml;
