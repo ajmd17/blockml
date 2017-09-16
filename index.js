@@ -3,6 +3,7 @@ if (typeof require === 'function') {
   var Lexer = require('./lexer');
   var Parser = require('./parser');
   var BlockNode = require('./block-node');
+  var AttributeNode = require('./attribute-node');
 }
 
 /**
@@ -14,12 +15,7 @@ function blockml(str) {
 
   if (arguments.length > 1) {
     for (var i = 1; i < arguments.length; i++) {
-      result += raw[i - 1];
-      result += (typeof arguments[i] === 'array' || arguments[i] instanceof Array)
-        ? arguments[i].map(function (arg) {
-            return arg;
-          }).join('\n')
-        : arguments[i];
+      result += raw[i - 1] + blockml._templateArgumentToString(arguments[i]);
     }
   }
 
@@ -27,7 +23,39 @@ function blockml(str) {
   return blockml.render(result);
 }
 
-blockml.registerCustomHandler = function (tagName, handlers) {
+blockml._templateMiddleware = [];
+
+/**
+ * Add another function to be called when iterating template items
+ */
+blockml.registerTemplateMiddleware = function (handler) {
+  this._templateMiddleware.push(handler);
+};
+
+/**
+ * @returns {String}
+ */
+blockml._templateArgumentToString = function (obj) {
+  if (typeof obj === 'array' || obj instanceof Array) {
+    return obj.reduce(function (accum, el) {
+      return accum + blockml._templateArgumentToString(el);
+    }, '');
+  }
+
+  var result = obj;
+
+  for (var i = 0; i < blockml._templateMiddleware.length; i++) {
+    result = blockml._templateMiddleware[i](result);
+  }
+
+  return String(result);
+};
+
+blockml.registerCustomAttributeHandler = function (tagName, handlers) {
+  AttributeNode.registerCustomHandler(tagName, new AttributeNode.Handler(handlers));
+};
+
+blockml.registerCustomBlockHandler = function (tagName, handlers) {
   BlockNode.registerCustomHandler(tagName, new BlockNode.Handler(handlers));
 };
 

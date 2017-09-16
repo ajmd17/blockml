@@ -10,14 +10,16 @@ function test() {
     }
   });*/
 
-  var input = `
+  var input = blockml`
     html {
       head {
         link
           rel: 'stylesheet'
           href: 'styles.css';
       }
-      body {
+      body @click: "${function () {
+        console.log('Hello World!');
+      }}" {
         div {
           "I am a div"
         }
@@ -25,13 +27,15 @@ function test() {
         input type: "text";
 
         a href: "https://google.com" {
-          "I am a\\"hi\\" 'dsdlink!"
+          "I am a link!"
         }
       }
     }
   `;
+
+  console.log(input)
   
-  blockml.render(input, function (errors, result) {
+  /*blockml.render(input, function (errors, result) {
     if (errors.length) {
       console.error('Errors: ', errors);
     } else {
@@ -41,7 +45,7 @@ function test() {
         console.log('Rendered HTML:\n\n', result);
       }
     }
-  });
+  });*/
 }
 
 test();
