@@ -59,16 +59,7 @@ blockml.registerCustomBlockHandler = function (tagName, handlers) {
   BlockNode.registerCustomHandler(tagName, new BlockNode.Handler(handlers));
 };
 
-blockml.createDOMNodes = function (input, cb) {
-  /** TODO */
-};
-
-/**
- * @param {String} input
- * @param {function(String[], String)} [cb]
- * @returns {String}
- */
-blockml.render = function (input, cb) {
+blockml._parse = function (input) {
   var errors = [];
 
   var lexer = new Lexer(input);
@@ -87,16 +78,56 @@ blockml.render = function (input, cb) {
     errors.push(parser.errors[i].message);
   }
 
-  var rendered = nodes.reduce(function (accum, el) {
+  return {
+    errors: errors,
+    nodes: nodes
+  };
+};
+
+blockml.createDOMNodes = function (input, cb) {
+  if (typeof document === 'undefined') {
+    throw new Error('document is undefined. createDOMNode() should be used in a browser or headless environment.');
+  }
+
+  var result = this._parse(input);
+  var rootElement = document.createElement('div');
+
+  for (var i = 0; i < result.nodes.length; i++) {
+    var childNode = result.nodes[i].createDOMNode();
+    rootElement.appendChild(childNode);
+  }
+
+  if (typeof cb === 'function') {
+    cb(result.errors, rootElement);
+  } else {
+    // if no callback supplied, throw any errors
+    if (result.errors.length != 0) {
+      throw new Error(result.errors.reduce(function (accum, el) {
+        return el + '\n';
+      }, ''));
+    }
+  }
+
+  return rootElement;
+};
+
+/**
+ * @param {String} input
+ * @param {function(String[], String)} [cb]
+ * @returns {String}
+ */
+blockml.render = function (input, cb) {
+  var result = this._parse(input);
+  var rendered = result.nodes.reduce(function (accum, el) {
     return accum + el.renderToString() + '\n';
   }, '');
 
   if (typeof cb === 'function') {
-    cb(errors, rendered);
+    cb(result.errors, rendered);
   } else {
     // if no callback supplied, throw any errors
-    if (errors.length != 0) {
-      throw new Error(errors.reduce(function (accum, el) {
+    if (result.errors.length != 0) {
+      throw new Error(result.errors.reduce(function (accum, el) {
         return el + '\n';
       }, ''));
     }

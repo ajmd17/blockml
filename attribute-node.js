@@ -39,7 +39,7 @@ AttributeNode.prototype.createDOMNode = function () {
   }
 
   var attribute = document.createAttribute(this.name);
-  attribute.value = this.value;
+  attribute.value = this.value.renderToString();
   return attribute;
 };
 

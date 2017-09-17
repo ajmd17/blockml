@@ -1,6 +1,6 @@
 {
   "name": "blockml",
-  "version": "0.0.6-alpha",
+  "version": "0.0.8-alpha",
   "description": "An alternative to HTML that uses curly braces (blocks) rather than xml-style structures.",
   "main": "index.js",
   "scripts": {

@@ -10,16 +10,14 @@ function test() {
     }
   });*/
 
-  var input = blockml`
+  var input = `
     html {
       head {
         link
           rel: 'stylesheet'
           href: 'styles.css';
       }
-      body @click: "${function () {
-        console.log('Hello World!');
-      }}" {
+      body {
         div {
           "I am a div"
         }
@@ -33,19 +31,18 @@ function test() {
     }
   `;
 
-  console.log(input)
-  
-  /*blockml.render(input, function (errors, result) {
-    if (errors.length) {
-      console.error('Errors: ', errors);
-    } else {
-      if (typeof document !== 'undefined') {
-        document.body.innerHTML = result;
+  if (typeof document !== 'undefined') {
+    var domNodes = blockml.createDOMNodes(input);
+    document.body.appendChild(domNodes);
+  } else {
+    blockml.render(input, function (errors, result) {
+      if (errors.length) {
+        console.error('Errors: ', errors);
       } else {
         console.log('Rendered HTML:\n\n', result);
       }
-    }
-  });*/
+    });
+  }
 }
 
 test();
