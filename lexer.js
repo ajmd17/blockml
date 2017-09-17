@@ -43,7 +43,7 @@ Lexer.prototype.nextToken = function () {
     return this.readStringLiteral();
   }
 
-  if (/[_A-Za-z]/.test(ch)) {
+  if (/[@_A-Za-z]/.test(ch)) {
     return this.readIdentifier();
   }
 
@@ -111,7 +111,7 @@ Lexer.prototype.readIdentifier = function () {
   var value = '';
   var ch = this.peekChar();
 
-  while (ch != undefined && /[_\-0-9A-Za-z]/.test(ch)) {
+  while (ch != undefined && /[@_\-0-9A-Za-z]/.test(ch)) {
     value += this.readChar();
     ch = this.peekChar();
   }

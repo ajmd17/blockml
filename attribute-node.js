@@ -13,13 +13,13 @@ function AttributeNode(name, value) {
   this.value = value;
 }
 
-/** @type {function(String, *)[]} */
+/** @type {function(AttributeNode)[]} */
 AttributeNode.customHandlers = [];
 
 AttributeNode.Handler = AttributeNodeHandler;
 
 /**
- * @param {function(String, *)} handler
+ * @param {function(AttributeNode)} handler
  */
 AttributeNode.registerCustomHandler = function (handler) {
   if (typeof handler !== 'function') {
@@ -27,6 +27,22 @@ AttributeNode.registerCustomHandler = function (handler) {
   }
 
   this.customHandlers.push(handler);
+};
+
+AttributeNode.prototype._runCustomHandlers = function () {
+  var attrib = this;
+  
+  for (var i = 0; i < AttributeNode.customHandlers.length; i++) {
+    attrib = AttributeNode.customHandlers[i](attrib);
+
+    if (attrib == null) {
+      return null;
+    } else if (!(attrib instanceof AttributeNode)) {
+      throw new TypeError('AttributeNode custom handler should return null or an AttributeNode instance');
+    }
+  }
+
+  return attrib;
 };
 
 AttributeNode.prototype.parse = function () {
@@ -38,13 +54,23 @@ AttributeNode.prototype.createDOMNode = function () {
     throw new Error('document is undefined. createDOMNode() should be used in a browser or headless environment.');
   }
 
-  var attribute = document.createAttribute(this.name);
-  attribute.value = this.value.renderToString();
+  var attrib = this._runCustomHandlers();
+  if (attrib == null) {
+    return null;
+  }
+
+  var attribute = document.createAttribute(attrib.name);
+  attribute.value = attrib.value.renderToString();
   return attribute;
 };
 
 AttributeNode.prototype.renderToString = function () {
-  return this.name + '="' + this.value.renderToString() + '"';
+  var attrib = this._runCustomHandlers();
+  if (attrib == null) {
+    return null;
+  }
+
+  return attrib.name + '="' + attrib.value.renderToString() + '"';
 };
 
 if (typeof module === 'object') {

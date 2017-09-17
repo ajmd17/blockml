@@ -78,12 +78,21 @@ BlockNode.prototype.createDOMNode = function () {
 
   for (var i = 0; i < this.attributes.length; i++) {
     var attributeNode = this.attributes[i].createDOMNode();
-    element.setAttributeNode(attributeNode);
+    if (attributeNode != null) {
+      element.setAttributeNode(attributeNode);
+    }
   }
 
   for (var i = 0; i < this.children.length; i++) {
     var childNode = this.children[i].createDOMNode();
-    element.appendChild(childNode);
+
+    if (typeof childNode === 'array' || childNode instanceof Array) {
+      childNode.forEach(function (el) {
+        element.appendChild(el);
+      });
+    } else {
+      element.appendChild(childNode);
+    }
   }
 
   return element;
